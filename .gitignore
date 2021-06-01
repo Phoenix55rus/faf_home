@@ -3,3 +3,4 @@ downlords-faf-client.vmoptions
 lib/
 natives/
 run
+*.log
