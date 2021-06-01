@@ -81,8 +81,8 @@ create_db_entry() {
   db_new_file=${db_file}_new
   if [ -f "$db_file" ]; then
     awk '$2 != "'"$test_dir"'" {print $0}' $db_file > $db_new_file
-    rm "$db_file"
-    mv "$db_new_file" "$db_file"
+    cp "$db_new_file" "$db_file"
+    rm "$db_new_file" 2> /dev/null
   fi
   dir_escaped=`echo "$test_dir" | sed -e 's/ /\\\\ /g'`
   echo "JRE_VERSION	$dir_escaped	$ver_major	$ver_minor	$ver_micro	$ver_patch" >> $db_file
@@ -270,8 +270,8 @@ if [ -f "$app_home/.install4j/pref_jre.cfg" ]; then
     read file_jvm_home < "$app_home/.install4j/pref_jre.cfg"
     test_jvm "$file_jvm_home"
     if [ -z "$app_java_home" ] && [ $tested_jvm = "false" ]; then
-if [ -f "$db_file" ]; then
-  rm "$db_file" 2> /dev/null
+if [ -w "$db_file" ]; then
+  /bin/sh -c ': > "$db_file"' 2> /dev/null
 fi
         test_jvm "$file_jvm_home"
     fi
@@ -281,8 +281,8 @@ fi
 if [ -z "$app_java_home" ]; then
   test_jvm "$app_home/jre" 
   if [ -z "$app_java_home" ] && [ $tested_jvm = "false" ]; then
-if [ -f "$db_file" ]; then
-  rm "$db_file" 2> /dev/null
+if [ -w "$db_file" ]; then
+  /bin/sh -c ': > "$db_file"' 2> /dev/null
 fi
     test_jvm "$app_home/jre"
   fi
@@ -297,8 +297,8 @@ if [ -f "$app_home/.install4j/inst_jre.cfg" ]; then
     read file_jvm_home < "$app_home/.install4j/inst_jre.cfg"
     test_jvm "$file_jvm_home"
     if [ -z "$app_java_home" ] && [ $tested_jvm = "false" ]; then
-if [ -f "$db_file" ]; then
-  rm "$db_file" 2> /dev/null
+if [ -w "$db_file" ]; then
+  /bin/sh -c ': > "$db_file"' 2> /dev/null
 fi
         test_jvm "$file_jvm_home"
     fi
@@ -334,35 +334,31 @@ cd "$app_home"
 app_home=`pwd`
 bundled_jre_home="$app_home/jre"
 
-if [ "__i4j_lang_restart" = "$1" ]; then
-  cd "$old_pwd"
-else
 cd "$old_pwd"
 
 
+cache_home="$XDG_CACHE_HOME"
+if [ "W$cache_home" = "W" ]; then
+  cache_home="$HOME/.cache"
 fi
-if [ "__i4j_extract_and_exit" = "$1" ]; then
-  cd "$old_pwd"
-  exit 0
-fi
-db_home=$HOME
-db_file_suffix=
+db_home="$cache_home/install4j"
+mkdir -p "$db_home" > /dev/null 2>&1
+db_file="$db_home/jre_version"
 if [ ! -w "$db_home" ]; then
   db_home=/tmp
-  db_file_suffix=_$USER
+  db_file="$db_home/install4j_jre_version_$USER"
 fi
-db_file=$db_home/.install4j$db_file_suffix
 if [ -d "$db_file" ] || ([ -f "$db_file" ] && [ ! -r "$db_file" ]) || ([ -f "$db_file" ] && [ ! -w "$db_file" ]); then
-  db_file=$db_home/.install4j_jre$db_file_suffix
+  db_file="${db_file}.2"
 fi
-if [ ! "__i4j_lang_restart" = "$1" ]; then
+if [ ! "__i4j_lang_restart" = "$1" ] && [ ! "__i4j_auth_restart" = "$1" ]; then
 run_unpack200 "$bundled_jre_home"
 run_unpack200 "$bundled_jre_home/jre"
 fi
 search_jre
 if [ -z "$app_java_home" ]; then
-if [ -f "$db_file" ]; then
-  rm "$db_file" 2> /dev/null
+if [ -w "$db_file" ]; then
+  /bin/sh -c ': > "$db_file"' 2> /dev/null
 fi
   search_jre
 fi
