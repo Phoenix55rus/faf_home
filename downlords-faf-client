@@ -5,7 +5,7 @@
 # Uncomment the following line to add additional VM parameters
 # INSTALL4J_ADD_VM_PARAMS=
 
-INSTALL4J_JAVA_HOME=/usr/lib/jvm/default/;
+INSTALL4J_JAVA_HOME=/usr/lib/jvm/java-15-adoptopenjdk/;
 INSTALL4J_JAVA_PREFIX=""
 GREP_OPTIONS=""
 
