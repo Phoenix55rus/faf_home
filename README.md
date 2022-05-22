@@ -21,3 +21,8 @@ Icon=/home/t/.local/share/icons/faf.png
 
 
 copy by https://pastebin.com/n39m8bZ7
+
+
+how to start in steam
+
+I also forced the proton version to : 3.16-4
